@@ -145,6 +145,7 @@ public class Picasso {
   };
 
   static volatile Picasso singleton = null;
+  static volatile Picasso singletonHomepage = null;
 
   private final Listener listener;
   private final RequestTransformer requestTransformer;
@@ -444,7 +445,7 @@ public class Picasso {
 
   /** Stops this instance from accepting further requests. */
   public void shutdown() {
-    if (this == singleton) {
+    if (this == singleton||this == singletonHomepage) {
       throw new UnsupportedOperationException("Default singleton instance cannot be shutdown.");
     }
     if (shutdown) {
@@ -687,6 +688,34 @@ public class Picasso {
     return singleton;
   }
 
+  public static Picasso with(Context context) {
+    if (singleton == null) {
+      synchronized (Picasso.class) {
+        if (singleton == null) {
+          if (PicassoProvider.context == null) {
+            throw new IllegalStateException("context == null");
+          }
+          singleton = new Builder(PicassoProvider.context).build();
+        }
+      }
+    }
+    return singleton;
+  }
+
+  public static Picasso withHomepage(Context context) {
+    if (singletonHomepage == null) {
+      synchronized (Picasso.class) {
+        if (singletonHomepage == null) {
+          if (PicassoProvider.context == null) {
+            throw new IllegalStateException("context == null");
+          }
+          singletonHomepage = new Builder(PicassoProvider.context).build();
+        }
+      }
+    }
+    return singletonHomepage;
+  }
+
   /**
    * Set the global instance returned from {@link #with}.
    * <p>
@@ -701,6 +730,18 @@ public class Picasso {
         throw new IllegalStateException("Singleton instance already exists.");
       }
       singleton = picasso;
+    }
+  }
+
+  public static void setSingletonInstanceHomepage(@NonNull Picasso picasso) {
+    if (picasso == null) {
+      throw new IllegalArgumentException("Picasso must not be null.");
+    }
+    synchronized (Picasso.class) {
+      if (singletonHomepage != null) {
+        throw new IllegalStateException("Singleton instance already exists.");
+      }
+      singletonHomepage = picasso;
     }
   }
 
