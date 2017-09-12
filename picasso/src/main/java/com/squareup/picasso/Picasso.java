@@ -27,6 +27,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RemoteViews;
 import java.io.File;
@@ -330,7 +331,8 @@ public class Picasso {
       return new RequestCreator(this, null, 0);
     }
     if (path.trim().length() == 0) {
-      throw new IllegalArgumentException("Path must not be empty.");
+      Log.e(TAG, "Path must not be empty.");
+//      throw new IllegalArgumentException("Path must not be empty.");
     }
     return load(Uri.parse(path));
   }
